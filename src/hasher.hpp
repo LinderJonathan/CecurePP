@@ -4,14 +4,12 @@
 #include <stdio.h>
 #include <string>
 
-#include <openssl/sha.h>
 class Hasher {
 
+    public:
     Hasher();
     ~Hasher();
 
-    public:
     std::string hash(const std::string &filePath);
-
     std::size_t operator()(const std::string &filePath) const;
 };
