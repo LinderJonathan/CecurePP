@@ -8,7 +8,6 @@
 #include <openssl/sha.h>
 
 Hasher::Hasher() {}
-
 Hasher::~Hasher() {}
 
 std::string Hasher::hash(const std::string &filePath) {
