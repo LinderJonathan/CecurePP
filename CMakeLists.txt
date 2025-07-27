@@ -10,7 +10,8 @@ find_package(OpenSSL REQUIRED)
 # TODO: add executable
 add_executable(cecurepp
     src/main.cpp 
-    src/hasher.cpp    
+    src/hasher.cpp  
+    src/keyHandler.cpp  
 )
 
 # TODO: link openSSL

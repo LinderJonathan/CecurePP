@@ -1,17 +1,17 @@
 #pragma once
 
-// TODO: use cryptopp or openssl to generate RSA private and public key -> store private key in pkcs8?
+#include <openssl/rsa.h>
 
 class KeyHandler
 {
 private:
-    /* data */
+    
 public:
-    KeyHandler(/* args */);
+    KeyHandler();
     ~KeyHandler();
 
-    int generateKeyPair(int bits);
-    int storeKeyPair();
+    RSA* generateKeyPair();
+    int storeKeyPair(RSA *rsa, const std::string &pwd , const std::string &filepath);
 };
 
 
