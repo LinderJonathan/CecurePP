@@ -1,5 +1,6 @@
 #include "keyHandler.hpp"
 #include <iostream>
+#include <string>
 #include <openssl/rsa.h>
 #include <openssl/bn.h>
 #include <openssl/err.h>
@@ -10,15 +11,33 @@ KeyHandler::KeyHandler() {}
 KeyHandler::~KeyHandler() {}
 
 // TODO: return RSA* object?
-RSA* KeyHandler::generateKeyPair () {
-    RSA *rsa = RSA_new();
-    BIGNUM *e = BN_new();
-    BN_set_word(e, 61337);
+std::string KeyHandler::generateKeyPair () {
+
+    EVP_PKEY_CTX *ctx = NULL;
+    EVP_PKEY *pkey = NULL;
+    ENGINE *e = NULL;
+
+    pkey = EVP_PKEY_new();
+    ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, e);
+    if (!ctx) {
+
+    }
+    // handle ctx err
+    if (EVP_PKEY_keygen_init(ctx) <= 0) {
+
+    }
     
-    int result = RSA_generate_key_ex(rsa, 2048, e, NULL);
-    if (result != 1){
+    // handle keygen init err
+    if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) <= 0) {
+
+    }
+    // handle ctx rsa keygen bits
+    int result = EVP_PKEY_generate(ctx, &pkey);
+    // handle result err
+    if ()
+    if (result != 1) {
         std::cerr << ERR_get_error() << std::endl;
-        RSA_free(rsa);
+        // EVP_pkey_free(key);
         BN_free(e);
 
         // TODO: handle this return case
