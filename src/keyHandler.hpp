@@ -1,6 +1,13 @@
 #pragma once
 
 #include <openssl/rsa.h>
+#include <string>
+#include <optional>
+
+struct keyInfo {
+    std::string error,
+    
+}
 
 class KeyHandler
 {
@@ -10,7 +17,7 @@ public:
     KeyHandler();
     ~KeyHandler();
 
-    RSA* generateKeyPair();
+    std::string generateKeyPair();
     int storeKeyPair(RSA *rsa, const std::string &pwd , const std::string &filepath);
 };
 
