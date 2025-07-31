@@ -16,7 +16,7 @@ public:
     EVP_PKEY *pkey;
 
     std::string generateKeyPair();
-    std::string storeKeyPair(const std::string &pwd , const std::string &filepath);
+    std::string storeKeyPair (const std::string &pwd, const std::string &fpPriv, const std::string &fpPub);
 };
 
 

@@ -7,7 +7,7 @@
 #include <openssl/pem.h>
 #include <openssl/evp.h>
 
-KeyHandler::KeyHandler() {}
+KeyHandler::KeyHandler() : pkey(NULL) {}
 
 KeyHandler::~KeyHandler() {
     if (pkey) {
@@ -19,7 +19,6 @@ KeyHandler::~KeyHandler() {
 std::string KeyHandler::generateKeyPair () {
 
     EVP_PKEY_CTX *ctx = NULL;
-    EVP_PKEY *pkey = NULL;
     ENGINE *e = NULL;
 
     pkey = EVP_PKEY_new();
@@ -61,32 +60,33 @@ std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string 
     FILE *pubk = fopen(fpPub.c_str(), "wb");
     if (!privk) {
         perror("fopen");
-        return "Unnable to find file " + fpPriv;
+        return "Unnable to find private file path" + fpPriv;
     }
 
     if (!pubk) {
         perror("fopen");
-        return "Unnable to find file " + fpPub;
+        return "Unnable to find public file path " + fpPub;
     }
 
     if (!pwd.empty()) {
         enc = EVP_aes_128_cbc();
     }
 
+    // TODO: handle case where no pwd is supplied
     const char *kstr = reinterpret_cast<const char *>(pwd.c_str());
 
     if (!PEM_write_PKCS8PrivateKey(privk, this->pkey, enc, kstr, strlen(kstr), NULL, NULL) || !PEM_write_PUBKEY(pubk, this->pkey)) {
         ERR_print_errors_fp(stderr);
         EVP_PKEY_free(this->pkey);
+        this->pkey = NULL;
         fclose(privk);
         fclose(pubk);
-        return "Unnable to write private key to file " + fpPriv;
+        return "Unnable to write write keypair to file";
     }
 
-    // TODO: figure out if the key structure needs to be saved for future program use
 
-    // TODO: write public key
     EVP_PKEY_free(this->pkey);
+    this->pkey = NULL;
     fclose(privk);
     fclose(pubk);
     

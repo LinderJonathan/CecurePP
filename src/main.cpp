@@ -4,13 +4,15 @@
 #include "keyHandler.hpp"
 int main () {
 
+    // TODO: GUI loop
 
+    // TODO: 1. generate private and public key 2. make password input optional
 
-    // TODO: generate private and public key
-
-    std::string fp;
+    std::string priv_path;
+    std::string pub_path;
     std::string pwd;
-    std::cin >> fp;
+    std::cin >> priv_path;
+    std::cin >> pub_path;
     std::cin >> pwd;
     std::string error;
     KeyHandler kh;
@@ -22,11 +24,17 @@ int main () {
         return 0;
     }
 
-    error = kh.storeKeyPair(pwd, "../test_pkcs8/test.pem");
+    if (!priv_path.compare(pub_path)) {
+        // TODO: handle file path selection
+    }
+
+    error = kh.storeKeyPair(pwd, priv_path, pub_path);
     if (!error.empty()) {
         // write error to GUI, write to terminal for now
         std::cout << error << std::endl;
         return 0;
     }
+
+    // TODO: 
     return 0;
 }
