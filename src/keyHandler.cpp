@@ -8,9 +8,14 @@
 #include <openssl/evp.h>
 
 KeyHandler::KeyHandler() {}
-KeyHandler::~KeyHandler() {}
 
-// TODO: return RSA* object?
+KeyHandler::~KeyHandler() {
+    if (pkey) {
+        EVP_PKEY_free(pkey);
+        pkey = NULL;
+    }
+}
+
 std::string KeyHandler::generateKeyPair () {
 
     EVP_PKEY_CTX *ctx = NULL;
@@ -20,43 +25,49 @@ std::string KeyHandler::generateKeyPair () {
     pkey = EVP_PKEY_new();
     ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, e);
     if (!ctx) {
-
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to initiate context with key generation algorithm";
     }
-    // handle ctx err
     if (EVP_PKEY_keygen_init(ctx) <= 0) {
-
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to initialize key generation algorithm";
     }
     
-    // handle keygen init err
     if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) <= 0) {
-
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to set RSA key generation bits";
     }
-    // handle ctx rsa keygen bits
-    int result = EVP_PKEY_generate(ctx, &pkey);
-    // handle result err
-    if ()
-    if (result != 1) {
-        std::cerr << ERR_get_error() << std::endl;
-        // EVP_pkey_free(key);
-        BN_free(e);
 
-        // TODO: handle this return case
-        return nullptr;
+    if (!EVP_PKEY_generate(ctx, &pkey)) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        EVP_PKEY_free(pkey);
+        return "Unnable to generate assymetric key pair";
     }
-    BN_free(e);
-    return rsa;
+
+    this->pkey = pkey;
+    EVP_PKEY_CTX_free(ctx);
+
+    return {};
 }
 
-int KeyHandler::storeKeyPair (RSA *rsa, const std::string &pwd , const std::string &filepath) {
-    FILE *pk = fopen(filepath.c_str(), "wb");
-    if (!pk) {
+std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string &fpPriv, const std::string &fpPub) {
+
+    const EVP_CIPHER *enc = NULL;
+    FILE *privk = fopen(fpPriv.c_str(), "wb");
+    FILE *pubk = fopen(fpPub.c_str(), "wb");
+    if (!privk) {
         perror("fopen");
-        return -1;
+        return "Unnable to find file " + fpPriv;
     }
 
-    EVP_PKEY *x = EVP_PKEY_new();
-    EVP_PKEY_assign_RSA(x, rsa);
-    const EVP_CIPHER *enc = nullptr;
+    if (!pubk) {
+        perror("fopen");
+        return "Unnable to find file " + fpPub;
+    }
 
     if (!pwd.empty()) {
         enc = EVP_aes_128_cbc();
@@ -64,15 +75,21 @@ int KeyHandler::storeKeyPair (RSA *rsa, const std::string &pwd , const std::stri
 
     const char *kstr = reinterpret_cast<const char *>(pwd.c_str());
 
-    if (!PEM_write_PKCS8PrivateKey(pk, x, enc, kstr, strlen(kstr), nullptr, nullptr)) {
+    if (!PEM_write_PKCS8PrivateKey(privk, this->pkey, enc, kstr, strlen(kstr), NULL, NULL) || !PEM_write_PUBKEY(pubk, this->pkey)) {
         ERR_print_errors_fp(stderr);
-        EVP_PKEY_free(x);
-        fclose(pk);
+        EVP_PKEY_free(this->pkey);
+        fclose(privk);
+        fclose(pubk);
+        return "Unnable to write private key to file " + fpPriv;
     }
 
-    EVP_PKEY_free(x);
-    fclose(pk);
+    // TODO: figure out if the key structure needs to be saved for future program use
 
-    return 0;
+    // TODO: write public key
+    EVP_PKEY_free(this->pkey);
+    fclose(privk);
+    fclose(pubk);
+    
+    return {};
 }
 

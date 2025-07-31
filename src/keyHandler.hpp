@@ -1,13 +1,9 @@
 #pragma once
 
 #include <openssl/rsa.h>
+#include <openssl/evp.h>
 #include <string>
 #include <optional>
-
-struct keyInfo {
-    std::string error,
-    
-}
 
 class KeyHandler
 {
@@ -17,8 +13,10 @@ public:
     KeyHandler();
     ~KeyHandler();
 
+    EVP_PKEY *pkey;
+
     std::string generateKeyPair();
-    int storeKeyPair(RSA *rsa, const std::string &pwd , const std::string &filepath);
+    std::string storeKeyPair(const std::string &pwd , const std::string &filepath);
 };
 
 
