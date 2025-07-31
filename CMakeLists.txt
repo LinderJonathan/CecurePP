@@ -7,12 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # TODO: find openSSL and crypto++
 find_package(OpenSSL REQUIRED)
 
-# TODO: add executable
 add_executable(cecurepp
     src/main.cpp 
     src/hasher.cpp  
     src/keyHandler.cpp  
 )
 
-# TODO: link openSSL
 target_link_libraries(cecurepp OpenSSL::SSL OpenSSL::Crypto)
