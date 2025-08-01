@@ -56,6 +56,7 @@ std::string KeyHandler::generateKeyPair () {
 std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string &fpPriv, const std::string &fpPub) {
 
     const EVP_CIPHER *enc = NULL;
+    const char *kstr = "";
     FILE *privk = fopen(fpPriv.c_str(), "wb");
     FILE *pubk = fopen(fpPub.c_str(), "wb");
     if (!privk) {
@@ -70,10 +71,8 @@ std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string 
 
     if (!pwd.empty()) {
         enc = EVP_aes_128_cbc();
+        kstr = reinterpret_cast<const char *>(pwd.c_str());
     }
-
-    // TODO: handle case where no pwd is supplied
-    const char *kstr = reinterpret_cast<const char *>(pwd.c_str());
 
     if (!PEM_write_PKCS8PrivateKey(privk, this->pkey, enc, kstr, strlen(kstr), NULL, NULL) || !PEM_write_PUBKEY(pubk, this->pkey)) {
         ERR_print_errors_fp(stderr);
@@ -89,7 +88,7 @@ std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string 
     this->pkey = NULL;
     fclose(privk);
     fclose(pubk);
-    
+
     return {};
 }
 
