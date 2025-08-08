@@ -16,6 +16,7 @@ KeyHandler::~KeyHandler() {
     }
 }
 
+// TODO: handle several methods f 
 std::string KeyHandler::generateKeyPair () {
 
     EVP_PKEY_CTX *ctx = NULL;
@@ -53,6 +54,7 @@ std::string KeyHandler::generateKeyPair () {
     return {};
 }
 
+// TODO: handle several methods of encryption
 std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string &fpPriv, const std::string &fpPub) {
 
     const EVP_CIPHER *enc = NULL;
