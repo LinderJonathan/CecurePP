@@ -14,3 +14,4 @@ add_executable(cecurepp
 )
 
 target_link_libraries(cecurepp OpenSSL::SSL OpenSSL::Crypto)
+target_include_directories(cecurepp PRIVATE utils)
