@@ -17,8 +17,6 @@ SignHandler::~SignHandler () {
 
 std::string SignHandler::sign (EVP_PKEY *pkey, const std::string &filepath) {
 
-    // TODO: *pctx should be created from scratch
-
     size_t siglen;
     ENGINE *e = NULL;
     EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new(pkey, e); // Private
@@ -59,8 +57,11 @@ std::string SignHandler::sign (EVP_PKEY *pkey, const std::string &filepath) {
         OPENSSL_free(sig);
         return "Unnable to finalize sign of file (digest)";
     }
-
+    
+    EVP_MD_CTX_free(md_ctx);
+    EVP_PKEY_CTX_free(pctx);
     this->sig = sig;
+
     return {};
 }
 
