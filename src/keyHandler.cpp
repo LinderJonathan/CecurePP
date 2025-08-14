@@ -16,7 +16,7 @@ KeyHandler::~KeyHandler() {
     }
 }
 
-// TODO: handle several methods f 
+// TODO: handle several key generation algorithms
 std::string KeyHandler::generateKeyPair () {
 
     EVP_PKEY_CTX *ctx = NULL;
@@ -94,3 +94,14 @@ std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string 
     return {};
 }
 
+// TODO: return value needs error handling in main
+EVP_PKEY* KeyHandler::loadKeyPrivate(const std::string &filepath, const char *pwd) {
+
+    FILE *f = fopen(filepath.c_str(), "rb");
+    EVP_PKEY *pkey = PEM_read_PrivateKey(f, NULL, NULL, (void*)pwd);
+    
+    return pkey;
+}
+
+
+// TODO: load public key (returns EVP_PKEY)
