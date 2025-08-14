@@ -14,7 +14,7 @@ class SignHandler {
         unsigned char *sig;
         EVP_MD *type;   // This is the digest algorithm
 
-        std::string sign (EVP_PKEY *pkey, const std::string &filepath) {};
-        std::string verify (EVP_PKEY *pubkey, EVP_PKEY_CTX *pubctx) {};
+        std::string sign (EVP_PKEY *pkey, const std::string &filepath);
+        std::string verify (EVP_PKEY *pubkey, EVP_PKEY_CTX *pubctx);
         
 };
