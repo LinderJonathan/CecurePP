@@ -20,8 +20,13 @@ cmake ..
 
 Then, navigate back to the root directory of the repo and build:
 ```bash
+cd ..
 cmake --build build
 ```
 
 3. Testing
-Testing depends on the external unit testing framework Catch2
+Testing depends on the external unit testing framework Catch2.
+
+## Contribute
+
+### Testing & Code coverage

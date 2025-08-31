@@ -15,8 +15,12 @@ public:
 
     EVP_PKEY *pkey;
 
-    std::string generateKeyPair();
+    std::string generateRsaHandler();
+    std::string generateEd25519Handler();
+    std::string generateDhHandler();
+
+    std::string generateKeyPairHandler(uint8_t algorithm);
     std::string storeKeyPair (const std::string &pwd, const std::string &fpPriv, const std::string &fpPub);
-    EVP_PKEY* loadKeyPrivate (const std::string &filepath, const char *pwd = NULL);
-    EVP_PKEY* loadKeyPublic (const std::string &filepath);
+    std::string loadKeyPrivate (EVP_PKEY** pkey, const std::string &filepath, const char *pwd = NULL);
+    std::string loadKeyPublic (EVP_PKEY** pkey, const std::string &filepath);
 };

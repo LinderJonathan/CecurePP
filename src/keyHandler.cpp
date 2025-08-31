@@ -16,9 +16,7 @@ KeyHandler::~KeyHandler() {
     }
 }
 
-// TODO: handle several key generation algorithms
-std::string KeyHandler::generateKeyPair () {
-
+std::string KeyHandler::generateRsaHandler() {
     EVP_PKEY_CTX *ctx = NULL;
     ENGINE *e = NULL;
 
@@ -52,6 +50,90 @@ std::string KeyHandler::generateKeyPair () {
     EVP_PKEY_CTX_free(ctx);
 
     return {};
+}
+
+std::string KeyHandler::generateEd25519Handler() {
+
+    EVP_PKEY_CTX *ctx = NULL;
+    ENGINE *e = NULL;
+
+    pkey = EVP_PKEY_new();
+    ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, e);
+    if (!ctx) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to initiate context with key generation algorithm";
+    }
+    if (EVP_PKEY_keygen_init(ctx) <= 0) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to initialize key generation algorithm";
+    }
+
+    if (!EVP_PKEY_generate(ctx, &pkey)) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        EVP_PKEY_free(pkey);
+        return "Unnable to generate assymetric key pair";
+    }
+
+    this->pkey = pkey;
+    EVP_PKEY_CTX_free(ctx);
+
+    return {};
+
+}
+
+std::string KeyHandler::generateDhHandler() {
+    
+    int priv_len = 2 * 112;
+    EVP_PKEY_CTX *ctx = NULL;
+    ENGINE *e = NULL;
+    OSSL_PARAM params[3];
+
+    pkey = EVP_PKEY_new();
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
+
+    params[0] = OSSL_PARAM_construct_utf8_string("group", "ffdhe2048", 0);
+    params[1] = OSSL_PARAM_construct_int("priv_len", &priv_len);
+    params[2] = OSSL_PARAM_construct_end();
+
+    if (!ctx) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to initiate context with key generation algorithm";
+    }
+    if (EVP_PKEY_keygen_init(ctx) <= 0) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        return "Unnable to initialize key generation algorithm";
+    }
+    
+    if (!EVP_PKEY_CTX_set_params(ctx, params)) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        EVP_PKEY_free(pkey);
+        return "Unnable to set Diffie Hellman parameters (p,q,x primes)";
+    }
+
+    if (!EVP_PKEY_generate(ctx, &pkey)) {
+        ERR_print_errors_fp(stderr);
+        EVP_PKEY_CTX_free(ctx);
+        EVP_PKEY_free(pkey);
+        return "Unnable to generate assymetric key pair";
+    }
+
+    this->pkey = pkey;
+    EVP_PKEY_CTX_free(ctx);
+
+    return {};
+
+}
+
+// TODO: handle several key generation algorithms
+std::string KeyHandler::generateKeyPairHandler (uint8_t algorithm) {
+    // TODO: switch on algorithm
+
 }
 
 // TODO: handle several methods of encryption
@@ -94,14 +176,41 @@ std::string KeyHandler::storeKeyPair (const std::string &pwd, const std::string 
     return {};
 }
 
-// TODO: return value needs error handling in main
-EVP_PKEY* KeyHandler::loadKeyPrivate(const std::string &filepath, const char *pwd) {
+// a pointer to an empty EVP_PKEY structure should always be passed
+std::string KeyHandler::loadKeyPrivate(EVP_PKEY** pkey, const std::string &filepath, const char *pwd) {
+
+    if (*pkey) {
+        return "Function requires to pass null EVP_PKEY structure";
+    }
 
     FILE *f = fopen(filepath.c_str(), "rb");
-    EVP_PKEY *pkey = PEM_read_PrivateKey(f, NULL, NULL, (void*)pwd);
+    if (!f) {
+        return "Key file not found";
+    }
     
-    return pkey;
+    if (!PEM_read_PrivateKey(f, NULL, NULL, (void*)pwd)){
+        return "Unnable to read private key file conents into EVP_PKEY structure. Did you provide the correct password?";
+    }
+    
+    return {};
 }
 
+// a pointer to an empty EVP_PKEY structure should always be passed
+std::string KeyHandler::loadKeyPublic(EVP_PKEY** pkey, const std::string &filepath) {
 
-// TODO: load public key (returns EVP_PKEY)
+    // An empty pkey pointer should always be passed
+    if (*pkey) {
+        return "Function requires to pass null EVP_PKEY structure";
+    }
+
+    FILE *f = fopen(filepath.c_str(), "rb");
+    if (!f) {
+        return "Key file not found";
+    }
+
+    if (!PEM_read_PUBKEY(f, pkey, NULL, NULL)){
+        return "Unnable to read public key file contents into EVP_PKEY structure";
+    }
+
+    return {};
+}
