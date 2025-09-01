@@ -16,6 +16,8 @@ KeyHandler::~KeyHandler() {
     }
 }
 
+
+
 std::string KeyHandler::generateRsaHandler() {
     EVP_PKEY_CTX *ctx = NULL;
     ENGINE *e = NULL;
@@ -127,13 +129,29 @@ std::string KeyHandler::generateDhHandler() {
     EVP_PKEY_CTX_free(ctx);
 
     return {};
-
 }
 
 // TODO: handle several key generation algorithms
-std::string KeyHandler::generateKeyPairHandler (uint8_t algorithm) {
-    // TODO: switch on algorithm
+std::string KeyHandler::generateKeyPairHandler (Algorithm algorithm){
 
+    std::string error;
+
+    switch (algorithm) {
+        case Algorithm::RSA:
+            error = generateRsaHandler();
+            break;
+        case Algorithm::ED25519:
+            error = generateEd25519Handler();
+            break;
+        case Algorithm::DIFFIE:
+            error = generateDhHandler();
+            break;
+        default:
+            error = "Algorithm unkown or wrongly specified";
+            break;
+    }
+
+    return error;
 }
 
 // TODO: handle several methods of encryption
