@@ -1,11 +1,10 @@
 #include "keyHandler.hpp"
 #include <iostream>
 #include <string>
-#include <openssl/rsa.h>
+#include <sstream>
 #include <openssl/bn.h>
 #include <openssl/err.h>
 #include <openssl/pem.h>
-#include <openssl/evp.h>
 
 KeyHandler::KeyHandler() : pkey(NULL) {}
 
@@ -19,26 +18,30 @@ KeyHandler::~KeyHandler() {
 
 
 std::string KeyHandler::generateRsaHandler() {
+    
     EVP_PKEY_CTX *ctx = NULL;
     ENGINE *e = NULL;
+    
+    unsigned int primes = 3;
+    unsigned int bits = 4096;
+    OSSL_PARAM params[3];
 
-    pkey = EVP_PKEY_new();
-    ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, e);
-    if (!ctx) {
-        ERR_print_errors_fp(stderr);
-        EVP_PKEY_CTX_free(ctx);
-        return "Unnable to initiate context with key generation algorithm";
-    }
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
+
     if (EVP_PKEY_keygen_init(ctx) <= 0) {
         ERR_print_errors_fp(stderr);
         EVP_PKEY_CTX_free(ctx);
-        return "Unnable to initialize key generation algorithm";
+        return "Unnable to initiate context with key generation algorithm (RSA)";
     }
-    
-    if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) <= 0) {
+
+    params[0] = OSSL_PARAM_construct_uint("bits", &primes);
+    params[1] = OSSL_PARAM_construct_uint("primes", &primes);
+    params[2] = OSSL_PARAM_construct_end();
+
+    if (!EVP_PKEY_CTX_set_params(ctx, params)) {
         ERR_print_errors_fp(stderr);
         EVP_PKEY_CTX_free(ctx);
-        return "Unnable to set RSA key generation bits";
+        return "Unnable to set context parameters (bits, primes) for the RSA context";
     }
 
     if (!EVP_PKEY_generate(ctx, &pkey)) {
@@ -59,13 +62,8 @@ std::string KeyHandler::generateEd25519Handler() {
     EVP_PKEY_CTX *ctx = NULL;
     ENGINE *e = NULL;
 
-    pkey = EVP_PKEY_new();
     ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, e);
-    if (!ctx) {
-        ERR_print_errors_fp(stderr);
-        EVP_PKEY_CTX_free(ctx);
-        return "Unnable to initiate context with key generation algorithm";
-    }
+
     if (EVP_PKEY_keygen_init(ctx) <= 0) {
         ERR_print_errors_fp(stderr);
         EVP_PKEY_CTX_free(ctx);
@@ -88,27 +86,22 @@ std::string KeyHandler::generateEd25519Handler() {
 
 std::string KeyHandler::generateDhHandler() {
     
-    int priv_len = 2 * 112;
     EVP_PKEY_CTX *ctx = NULL;
     ENGINE *e = NULL;
+
+    int priv_len = 2 * 112;
     OSSL_PARAM params[3];
 
-    pkey = EVP_PKEY_new();
     ctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
 
     params[0] = OSSL_PARAM_construct_utf8_string("group", "ffdhe2048", 0);
     params[1] = OSSL_PARAM_construct_int("priv_len", &priv_len);
     params[2] = OSSL_PARAM_construct_end();
 
-    if (!ctx) {
-        ERR_print_errors_fp(stderr);
-        EVP_PKEY_CTX_free(ctx);
-        return "Unnable to initiate context with key generation algorithm";
-    }
     if (EVP_PKEY_keygen_init(ctx) <= 0) {
         ERR_print_errors_fp(stderr);
         EVP_PKEY_CTX_free(ctx);
-        return "Unnable to initialize key generation algorithm";
+        return "Unnable to initiate context with key generation algorithm (DH)";
     }
     
     if (!EVP_PKEY_CTX_set_params(ctx, params)) {
@@ -147,7 +140,9 @@ std::string KeyHandler::generateKeyPairHandler (Algorithm algorithm){
             error = generateDhHandler();
             break;
         default:
-            error = "Algorithm unkown or wrongly specified";
+            std::stringstream ss;
+            ss << "Algorithm" << static_cast<int>(algorithm) << "unknown or wrongly specified";
+            error = ss.str();
             break;
     }
 
@@ -203,7 +198,9 @@ std::string KeyHandler::loadKeyPrivate(EVP_PKEY** pkey, const std::string &filep
 
     FILE *f = fopen(filepath.c_str(), "rb");
     if (!f) {
-        return "Key file not found";
+        std::stringstream ss;
+        ss << "Key file " << filepath << " not found";
+        return ss.str();
     }
     
     if (!PEM_read_PrivateKey(f, NULL, NULL, (void*)pwd)){
@@ -223,7 +220,9 @@ std::string KeyHandler::loadKeyPublic(EVP_PKEY** pkey, const std::string &filepa
 
     FILE *f = fopen(filepath.c_str(), "rb");
     if (!f) {
-        return "Key file not found";
+        std::stringstream ss;
+        ss << "Key file " << filepath << " not found";
+        return ss.str();
     }
 
     if (!PEM_read_PUBKEY(f, pkey, NULL, NULL)){
