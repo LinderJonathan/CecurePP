@@ -28,7 +28,7 @@ int main () {
         KeyHandler kh;
         // SignHandler sh();
 
-        error = kh.generateKeyPair();
+        error = kh.generateKeyPairHandler(Algorithm::RSA);
         if (!error.empty()) {
             // write error to GUI, write to terminal for now
             std::cout << error << std::endl;
@@ -47,8 +47,9 @@ int main () {
         }
 
         std::cout << "Loading private key" << std::endl;
-        EVP_PKEY *pkey = kh.loadKeyPrivate(priv_path);
-        if (pkey == NULL) {
+        EVP_PKEY *pkey = NULL;
+        error = kh.loadKeyPrivate(&pkey, "");
+        if (!error.empty()) {
             std::cout << "private key was null" << std::endl;
         }
     }
