@@ -1,20 +1,13 @@
-# TESTS
+# tests
+add_executable(generateRsaHandlerTest generateRsaHandlerTest.cpp)
 
-add_executable(generateRsaHandlerTest
-    generateRsaHandlerTest.cpp
+# link
+target_link_libraries(generateRsaHandlerTest PRIVATE
+    cecurepp_lib
+    Catch2::Catch2WithMain
 )
 
-# INCLUDE
-target_include_directories( generateRsaHandlerTest PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
-)
-
-# TARGET SOURCES
-target_sources( generateRsaHandlerTest PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/hasher.cpp
-    ${CMAKE_SOURCE_DIR}/src/keyHandler.cpp
-    ${CMAKE_SOURCE_DIR}/src/signHandler.cpp
-)
-
-# REGISTER TESTS
-add_test(NAME generateRsaHandlerTest COMMAND generateRsaHandlerTest)
+# register
+include(CTest)
+include(Catch)
+catch_discover_tests(generateRsaHandlerTest)
