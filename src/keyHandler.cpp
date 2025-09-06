@@ -91,10 +91,11 @@ std::string KeyHandler::generateDhHandler() {
 
     int priv_len = 2 * 112;
     OSSL_PARAM params[3];
+    char group[] = "ffdhe2048";
 
     ctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
 
-    params[0] = OSSL_PARAM_construct_utf8_string("group", "ffdhe2048", 0);
+    params[0] = OSSL_PARAM_construct_utf8_string("group", group, 0);
     params[1] = OSSL_PARAM_construct_int("priv_len", &priv_len);
     params[2] = OSSL_PARAM_construct_end();
 
