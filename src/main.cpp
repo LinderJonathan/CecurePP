@@ -5,6 +5,8 @@
 #include "keyHandler.hpp"
 #include "signHandler.hpp"
 #include "fileUtils.hpp"
+#include "interface/startWindow.cpp"
+
 
 int main () {
 
