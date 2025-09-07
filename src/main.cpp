@@ -1,14 +1,15 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
 #include "hasher.hpp"
 #include "keyHandler.hpp"
 #include "signHandler.hpp"
 #include "fileUtils.hpp"
-#include "interface/startWindow.cpp"
 
 
-int main () {
+int main(int argc, char* argv[]) {
 
     // TODO: GUI loop
 
