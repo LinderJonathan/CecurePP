@@ -3,12 +3,18 @@
 ## How to use
 ### VCPKG package management
 
-CecurePP handle and resolve dependencies through `vcpkg`. Into a suitable folder (i.e. C:/users/user/tools/), clone a copy of `vcpkg`:
+CecurePP handle and resolve most dependencies through `vcpkg`. Into a suitable folder (i.e. C:/users/user/tools/), clone a copy of `vcpkg`:
 
 ```bash
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.sh  # or .\bootstrap-vcpkg.bat on Windows
+
+```
+### SDL2 dependency
+SDL2 is in this project not handled by vcpkg, and needs to be installed manually on your machine. In your mingW shell,
+```bash
+pacman -S mingw-w64-x86_64-SDL2
 
 ```
 
