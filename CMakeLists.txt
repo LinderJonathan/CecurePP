@@ -29,6 +29,7 @@ add_library(cecurepp_lib
     src/keyHandler.cpp
     src/signHandler.cpp
     utils/fileUtils.cpp
+    src/graphics/windowHandler.cpp
 )
 
 target_include_directories(cecurepp_lib PUBLIC
