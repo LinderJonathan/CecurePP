@@ -13,9 +13,20 @@
 int main(int argc, char* argv[]) {
 
     windowHandler wh;
-
-    //SDL_Window *window = SDL_CreateWindow()
-    // TODO: 1. generate private and public key 2. make password input optional
+    while (wh.getRunningState() == true) {
+        SDL_Event event;
+        while (SDL_WaitEvent(&event)){
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                wh.setRunningState(false);
+                break;
+            
+            default:
+                break;
+            }
+        }
+    }
 
     return 0;
 }
