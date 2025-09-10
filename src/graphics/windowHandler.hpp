@@ -13,10 +13,15 @@ class windowHandler
     private:
         SDL_Window *window;
         SDL_Renderer *renderer;
+        bool running;
+
     public:
         windowHandler();
         ~windowHandler();
 
+        bool getRunningState();
+        void setRunningState(bool state);
         void drawWindow();
         void close ();
+
 };

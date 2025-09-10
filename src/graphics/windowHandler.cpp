@@ -15,12 +15,20 @@ windowHandler::windowHandler() : window(NULL), renderer(NULL) {
     // TODO: handle SDL_Createrenderer return NULL case
 
     renderer = SDL_CreateRenderer(window, -1,  RENDERER_FLAGS_DEFAULT);
+    running = true;
 }
 
 windowHandler::~windowHandler() {
     close();
 }
 
+bool windowHandler::getRunningState() {
+    return running;
+}
+
+void windowHandler::setRunningState(bool state) {
+    running = state;
+}
 void windowHandler::drawWindow() {
     
 }
@@ -28,4 +36,6 @@ void windowHandler::drawWindow() {
 void windowHandler::close() {
     // TODO: de-allocate some window structs???
     SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();
 }
