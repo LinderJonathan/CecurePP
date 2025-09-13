@@ -13,18 +13,20 @@
 int main(int argc, char* argv[]) {
 
     windowHandler wh;
+    wh.renderStartScreen();
     while (wh.getRunningState() == true) {
         SDL_Event event;
-        while (SDL_WaitEvent(&event)){
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                wh.setRunningState(false);
-                break;
-            
-            default:
-                break;
-            }
+        
+        SDL_WaitEvent(&event);
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            wh.setRunningState(false);
+            break;
+        
+        default:
+            break;
+
         }
     }
 
