@@ -27,5 +27,4 @@ class windowHandler
         void setRunningState(bool state);
         void renderStartScreen();
         void close ();
-
 };
