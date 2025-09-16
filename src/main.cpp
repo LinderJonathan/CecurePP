@@ -13,22 +13,7 @@
 int main(int argc, char* argv[]) {
 
     windowHandler wh;
-    wh.renderStartScreen();
-    while (wh.getRunningState() == true) {
-        SDL_Event event;
-        
-        SDL_WaitEvent(&event);
-        switch (event.type)
-        {
-        case SDL_QUIT:
-            wh.setRunningState(false);
-            break;
-        
-        default:
-            break;
-
-        }
-    }
+    wh.programLoop(); 
 
     return 0;
 }
