@@ -1,4 +1,5 @@
 #include "windowHandler.hpp"
+#include "widget.hpp"
 
 /**
  * @file    windowHandler.cpp
@@ -9,7 +10,6 @@
 windowHandler::windowHandler() : window(NULL), renderer(NULL) {
     SDL_Init;
 
-    // TODO: handle SDL_Createwindow return NULL case
     window = SDL_CreateWindow(
         "CecurePP: Cecure Cigning",
         SDL_WINDOWPOS_CENTERED,
@@ -28,25 +28,38 @@ windowHandler::windowHandler() : window(NULL), renderer(NULL) {
         std::cout << "Unnable to create renderer: " << SDL_GetError() << "\n";
         SDL_DestroyWindow(window);
         SDL_Quit();
-
     }
     running = true;
 }
 
 windowHandler::~windowHandler() { close(); }
-bool windowHandler::getRunningState() { return running; }
-void windowHandler::setRunningState(bool state) { running = state; }
 
-void windowHandler::renderStartScreen() {
+void windowHandler::programLoop() {
 
-    const SDL_Rect quitButton = {200, 200, 200, 200};
+    // TODO: figure out how to build up different windows
+    
+    // TODO: figure out how to iterate through widgets.
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &quitButton);
-    SDL_RenderFillRect(renderer, &quitButton);
-    SDL_RenderPresent(renderer);
+    button testButton(0, 0, BUTTON_WIDTH_CONFIG_1, BUTTON_HEIGHT_CONFIG_1, "Test", NULL);
+    testButton.render(renderer, BUTTON_THEME_1);
+    
+    while (running) {
+        SDL_Event event;
+        SDL_WaitEvent(&event);
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            running = false;
+            break;
+        
+        default:
+            break;
+        }
+    }
 }
 
+bool windowHandler::getRunningState() { return running; }
+void windowHandler::setRunningState(bool state) { running = state; }
 void windowHandler::close() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
