@@ -12,6 +12,8 @@
 app::app() : window(NULL), renderer(NULL) {
 
     SDL_Init;
+    TTF_Init();
+
     window = SDL_CreateWindow(
         "CecurePP: Cecure Cigning",
         SDL_WINDOWPOS_CENTERED,
@@ -32,8 +34,7 @@ app::app() : window(NULL), renderer(NULL) {
         SDL_Quit();
     }
 
-    TTF_Init();
-    font = TTF_OpenFont(FONT_PATH_1, 18);
+    font = TTF_OpenFont(FONT_PATH_1, BUTTON_FONTSIZE_48);
     if (!font) {
         std::cout << "could not find font: " << TTF_GetError() <<  "\n";
     }
@@ -48,7 +49,7 @@ void app::programLoop() {
     
     // TODO: figure out how to iterate through widgets.
 
-    button testButton(0, 0, BUTTON_WIDTH_CONFIG_1, BUTTON_HEIGHT_CONFIG_1, "test", nullptr, BUTTON_THEME_1);
+    button testButton(0, 0, BUTTON_WIDTH_CONFIG_2, BUTTON_HEIGHT_CONFIG_2, BUTTON_FONTSIZE_36, "QUIT", nullptr, BUTTON_THEME_1);
     testButton.render(renderer, BUTTON_THEME_1, font);
     
     while (running) {
