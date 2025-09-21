@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <functional>
 #include <string>
 
@@ -29,9 +30,10 @@ struct color {
 struct buttonTheme {
     color bgColor;
     color outlineColor;
-    color textColor;
+    SDL_Color textColor;
 };
 
+// TODO: refactor to use SDL_Color instead
 inline buttonTheme BUTTON_THEME_1 = {
     {
         BUTTON_BACKGROUND_COLOR_R_THEME_1,
@@ -60,7 +62,7 @@ private:
 public:
 
     SDL_Rect rect;
-    const std::string &label;
+    const char *label;
     std::function<void()> callback;
     struct buttonTheme theme;
 
@@ -69,11 +71,12 @@ public:
         int y,
         int width,
         int height,
-        const std::string &lbl,
-        std::function<void()> callback
+        const char *lbl,
+        std::function<void()> callback,
+        buttonTheme theme
     );
     ~button();
 
-    void render(SDL_Renderer *renderer, buttonTheme theme);
+    void render(SDL_Renderer *renderer, buttonTheme theme, TTF_Font *font);
     void handleEvent(SDL_Event *event);
 };

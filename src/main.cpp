@@ -7,13 +7,13 @@
 #include "keyHandler.hpp"
 #include "signHandler.hpp"
 #include "fileUtils.hpp"
-#include "graphics/windowHandler.hpp"
+#include "graphics/app.hpp"
 
 
 int main(int argc, char* argv[]) {
 
-    windowHandler wh;
-    wh.programLoop(); 
+    app app;   // MUST BE INITIALIZED BEFORE ANY CALLS TO SDL APIs
+    app.programLoop(); 
 
     return 0;
 }
