@@ -10,7 +10,6 @@
 #define WINDOW_FLAGS_DEFAULT            SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN
 #define RENDERER_FLAGS_DEFAULT          SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
 
-#define FONT_PATH_1                     "utils/graphics/fonts/BoldPixels.ttf"
 
 class app
 {

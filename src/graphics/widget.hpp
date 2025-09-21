@@ -5,6 +5,8 @@
 #include <functional>
 #include <string>
 
+#define FONT_PATH_1                             "utils/graphics/fonts/BoldPixels.ttf"
+
 #define BUTTON_HEIGHT_CONFIG_1                  50
 #define BUTTON_WIDTH_CONFIG_1                   100
 #define BUTTON_HEIGHT_CONFIG_2                  100
@@ -23,13 +25,21 @@
 #define BUTTON_TEXT_COLOR_B_THEME_1             0
 #define BUTTON_TEXT_COLOR_ALPHA_THEME_1         255
 
+#define BUTTON_FONTSIZE_12                      12
+#define BUTTON_FONTSIZE_16                      16
+#define BUTTON_FONTSIZE_18                      18
+#define BUTTON_FONTSIZE_24                      24
+#define BUTTON_FONTSIZE_36                      36
+#define BUTTON_FONTSIZE_48                      48
+
+
 struct color {
     int r, g, b, alpha;
 };
 
 struct buttonTheme {
-    color bgColor;
-    color outlineColor;
+    SDL_Color bgColor;
+    SDL_Color outlineColor;
     SDL_Color textColor;
 };
 
@@ -62,18 +72,22 @@ private:
 public:
 
     SDL_Rect rect;
+    TTF_Font *font;
     const char *label;
     std::function<void()> callback;
     struct buttonTheme theme;
+
 
     button(
         int x,
         int y,
         int width,
         int height,
+        int fontSize,
         const char *lbl,
         std::function<void()> callback,
         buttonTheme theme
+
     );
     ~button();
 
