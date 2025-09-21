@@ -15,8 +15,17 @@ cd vcpkg
 SDL2 is in this project not handled by vcpkg, and needs to be installed manually on your machine. In your mingW shell,
 ```bash
 pacman -S mingw-w64-x86_64-SDL2
+pacman -S mingw-w64-x86_64-SDL2_ttf
 
 ```
+
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${vcpkgRoot}/x64-windows/include",
+                "${vcpkgRoot}/x64-windows-static/include",
+                "C:/msys64/mingw64/include",
+                "C:/msys64/mingw64/include/SDL2"
+            ],
 
 ### Build with CMake
 
