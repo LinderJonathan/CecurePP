@@ -1,7 +1,3 @@
-#include "app.hpp"
-#include "widget.hpp"
-#include <direct.h>   // for _getcwd on Windows
-
 
 /**
  * @file    app.cpp
@@ -9,8 +5,13 @@
  * 
  */
 
-app::app() : window(NULL), renderer(NULL) {
+#include "app.hpp"
+#include "button.hpp"
+#include <vector>
 
+std::vector<widget> widgets;
+
+app::app() : window(NULL), renderer(NULL) {
     SDL_Init;
     TTF_Init();
 
@@ -48,8 +49,12 @@ void app::programLoop() {
     // TODO: figure out how to build up different windows
     
     // TODO: figure out how to iterate through widgets.
-
     button testButton(0, 0, BUTTON_WIDTH_CONFIG_2, BUTTON_HEIGHT_CONFIG_2, BUTTON_FONTSIZE_36, "QUIT", nullptr, BUTTON_THEME_1);
+
+    // TODO: move to class member instead.
+
+    widgets.push_back(testButton);
+
     testButton.render(renderer, BUTTON_THEME_1, font);
     
     while (running) {
@@ -60,7 +65,15 @@ void app::programLoop() {
         case SDL_QUIT:
             running = false;
             break;
-        
+        case SDL_MOUSEBUTTONDOWN:
+            /*
+            FIRST ATTEMPT: iterate over all widgets.
+            * Check if mouse clicked inside their boundary.
+            * It so, call widget.eventHandle
+            * 
+            SECOND ATTEMPT: different widgets have overlapping boundaries.
+            * Check to see which is "on top"? "Top-most" wins
+            */ 
         default:
             break;
         }

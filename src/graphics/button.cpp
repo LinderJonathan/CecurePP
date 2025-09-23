@@ -1,18 +1,18 @@
-#include "widget.hpp"
+#include "button.hpp"
 
 button::button(
     int x,
     int y,
-    int width,
-    int height,
+    int w,
+    int h,
     int fontSize,
     const char *lbl,
     std::function<void()> cb,
     buttonTheme theme
 ) : 
-    rect{x, y, width, height},
+    widget(x,y,w,h),
     font(TTF_OpenFont(FONT_PATH_1, fontSize)),
-    label(lbl), 
+    label(), 
     callback(cb),
     theme(theme){
 
@@ -22,7 +22,7 @@ button::~button(){
 
 }
 
-void button::render(SDL_Renderer *renderer, buttonTheme theme, TTF_Font *font) {
+void button::render(SDL_Renderer *renderer) {
 
     // Render outline
     SDL_SetRenderDrawColor(
