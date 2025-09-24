@@ -34,7 +34,7 @@ add_library(cecurepp_lib
     src/signHandler.cpp
     utils/fileUtils.cpp
     src/graphics/app.cpp
-    src/graphics/widget.cpp
+    src/graphics/button.cpp
 )
 
 target_include_directories(cecurepp_lib PUBLIC

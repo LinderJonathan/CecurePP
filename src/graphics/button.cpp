@@ -6,15 +6,14 @@ button::button(
     int w,
     int h,
     int fontSize,
-    const char *lbl,
+    const char *id,
     std::function<void()> cb,
-    buttonTheme theme
+    widgetTheme theme
 ) : 
-    widget(x,y,w,h),
+    widget(x,y,w,h, id, theme),
     font(TTF_OpenFont(FONT_PATH_1, fontSize)),
-    label(), 
-    callback(cb),
-    theme(theme){
+    callback(cb)
+    {
 
 }
 
@@ -45,7 +44,7 @@ void button::render(SDL_Renderer *renderer) {
     SDL_RenderFillRect(renderer, &rect);
     
     // Render surface from 
-    SDL_Surface *surfaceLabel = TTF_RenderText_Solid(font, label, theme.textColor);
+    SDL_Surface *surfaceLabel = TTF_RenderText_Solid(font, identifier, theme.textColor);
     SDL_Rect Message_rect;
     Message_rect.x = rect.x + (rect.w - surfaceLabel->w) / 2; 
     Message_rect.y = rect.y + (rect.h - surfaceLabel->h) / 2;

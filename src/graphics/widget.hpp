@@ -5,20 +5,22 @@
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "themes.hpp"
 
 class widget
 {
 private:
     
 public:
-    SDL_Rect rect;
-    
-    // TODO: take from button class
-    //widgetTheme theme;
-    //const char *label;
 
-    widget(int x, int y, int w, int h) {
-        rect = {x, y, w, h};
+    SDL_Rect rect;    
+    const char *identifier;
+    widgetTheme theme;
+
+    widget(int x, int y, int w, int h, const char *id, widgetTheme theme) {
+        this->rect = {x, y, w, h};
+        this->identifier = id;
+        this->theme = theme;
     }
 
     virtual ~widget() = default;

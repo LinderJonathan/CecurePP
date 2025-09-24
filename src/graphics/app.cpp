@@ -8,8 +8,9 @@
 #include "app.hpp"
 #include "button.hpp"
 #include <vector>
+#include <memory>
 
-std::vector<widget> widgets;
+std::vector<std::unique_ptr<widget>> widgets;
 
 app::app() : window(NULL), renderer(NULL) {
     SDL_Init;
@@ -35,7 +36,7 @@ app::app() : window(NULL), renderer(NULL) {
         SDL_Quit();
     }
 
-    font = TTF_OpenFont(FONT_PATH_1, BUTTON_FONTSIZE_48);
+    font = TTF_OpenFont(FONT_PATH_1, WIDGET_FONTSIZE_48);
     if (!font) {
         std::cout << "could not find font: " << TTF_GetError() <<  "\n";
     }
@@ -49,13 +50,11 @@ void app::programLoop() {
     // TODO: figure out how to build up different windows
     
     // TODO: figure out how to iterate through widgets.
-    button testButton(0, 0, BUTTON_WIDTH_CONFIG_2, BUTTON_HEIGHT_CONFIG_2, BUTTON_FONTSIZE_36, "QUIT", nullptr, BUTTON_THEME_1);
-
+    button testButton(0, 0, WIDGET_WIDTH_CONFIG_2, WIDGET_HEIGHT_CONFIG_2, WIDGET_FONTSIZE_36, "QUIT", nullptr, WIDGET_THEME_1);
+    widgets.push_back(std::make_unique<button>(testButton));
     // TODO: move to class member instead.
 
-    widgets.push_back(testButton);
-
-    testButton.render(renderer, BUTTON_THEME_1, font);
+    testButton.render(renderer);
     
     while (running) {
         SDL_Event event;
@@ -66,18 +65,32 @@ void app::programLoop() {
             running = false;
             break;
         case SDL_MOUSEBUTTONDOWN:
+            int x, y;
+            SDL_GetMouseState(&x, &y);
             /*
             FIRST ATTEMPT: iterate over all widgets.
             * Check if mouse clicked inside their boundary.
             * It so, call widget.eventHandle
-            * 
-            SECOND ATTEMPT: different widgets have overlapping boundaries.
-            * Check to see which is "on top"? "Top-most" wins
-            */ 
-        default:
-            break;
+            */
+
+            for (int i = 0; i < widgets.size(); i++) {
+                if (
+                    x > widgets[i]->rect.x && x < widgets[i]->rect.x + widgets[i]->rect.w &&
+                    y > widgets[i]->rect.y && y < widgets[i]->rect.y + widgets[i]->rect.h
+                ) {
+                    // TODO: test to implement
+                    // widgets[i].handleEvent(&event);
+                }
+            }
+                /*
+                SECOND ATTEMPT: different widgets have overlapping boundaries.
+                * Check to see which is "on top"? "Top-most" wins
+                */
+            default:
+                break;
         }
     }
+
 }
 
 bool app::getRunningState() { return running; }

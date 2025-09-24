@@ -14,21 +14,15 @@ private:
 public:
 
     TTF_Font *font;
-    const char *label;
     std::function<void()> callback;
-    struct buttonTheme theme;
-
 
     button(
-        int x,
-        int y,
-        int width,
-        int height,
+        int x, int y, 
+        int w, int h, 
         int fontSize,
-        const char *lbl,
+        const char *id, 
         std::function<void()> callback,
-        buttonTheme theme
-
+        widgetTheme theme
     );
     ~button();
 
