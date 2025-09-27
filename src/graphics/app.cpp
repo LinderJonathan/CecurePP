@@ -50,13 +50,15 @@ void app::programLoop() {
     // TODO: figure out how to build up different windows
     
     // TODO: figure out how to iterate through widgets.
-    button testButton(0, 0, WIDGET_WIDTH_CONFIG_2, WIDGET_HEIGHT_CONFIG_2, WIDGET_FONTSIZE_36, "QUIT", nullptr, WIDGET_THEME_1);
-    widgets.push_back(std::make_unique<button>(testButton));
+    button quitButton(0, 0, WIDGET_WIDTH_CONFIG_2, WIDGET_HEIGHT_CONFIG_2, WIDGET_FONTSIZE_36, "QUIT", [this]
+                      { setRunningState(false); }, WIDGET_THEME_1);
+    widgets.push_back(std::make_unique<button>(quitButton));
     // TODO: move to class member instead.
 
-    testButton.render(renderer);
+    quitButton.render(renderer);
     
     while (running) {
+        int x, y;   // TODO: make these variables GLOBAL instead to save mouse position
         SDL_Event event;
         SDL_WaitEvent(&event);
         switch (event.type)
@@ -65,27 +67,38 @@ void app::programLoop() {
             running = false;
             break;
         case SDL_MOUSEBUTTONDOWN:
-            int x, y;
             SDL_GetMouseState(&x, &y);
             /*
             FIRST ATTEMPT: iterate over all widgets.
             * Check if mouse clicked inside their boundary.
             * It so, call widget.eventHandle
             */
-
+            
             for (int i = 0; i < widgets.size(); i++) {
                 if (
                     x > widgets[i]->rect.x && x < widgets[i]->rect.x + widgets[i]->rect.w &&
                     y > widgets[i]->rect.y && y < widgets[i]->rect.y + widgets[i]->rect.h
                 ) {
-                    // TODO: test to implement
-                    // widgets[i].handleEvent(&event);
+                    widgets[i]->handleEvent(&event);
                 }
             }
                 /*
                 SECOND ATTEMPT: different widgets have overlapping boundaries.
                 * Check to see which is "on top"? "Top-most" wins
                 */
+            break;
+        case SDL_MOUSEBUTTONUP:
+            SDL_GetMouseState(&x, &y);
+            for (int i = 0; i < widgets.size(); i++) {
+                if (
+                    x > widgets[i]->rect.x && x < widgets[i]->rect.x + widgets[i]->rect.w &&
+                    y > widgets[i]->rect.y && y < widgets[i]->rect.y + widgets[i]->rect.h
+                ) {
+                    widgets[i]->handleEvent(&event);
+                }
+            }
+
+            break;
             default:
                 break;
         }

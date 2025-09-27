@@ -11,6 +11,7 @@ button::button(
     widgetTheme theme
 ) : 
     widget(x,y,w,h, id, theme),
+    isPressed(false),
     font(TTF_OpenFont(FONT_PATH_1, fontSize)),
     callback(cb)
     {
@@ -57,5 +58,17 @@ void button::render(SDL_Renderer *renderer) {
 }
 
 void button::handleEvent(SDL_Event *event) {
-    callback();
+    
+    if (event->type == SDL_MOUSEBUTTONDOWN) {
+        isPressed = true;
+        // TODO: check SDL_MOTION and that isPressed is true (we just had MOUSEBUTTON DOWN), 
+        //       get x,y points of hover and set isPressed to false if residing outside of box once 
+
+    }
+    if (event->type == SDL_MOUSEBUTTONUP && isPressed) {
+        callback();
+        std::cout << "Button pressed" << std::endl;
+        isPressed = false;
+    }
+
 }

@@ -12,7 +12,7 @@ class button : public widget
 private:
     /* data */
 public:
-
+    int isPressed;
     TTF_Font *font;
     std::function<void()> callback;
 
