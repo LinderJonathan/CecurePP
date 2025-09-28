@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include "button.hpp"
+#include "widget.hpp"
  
 #define WINDOW_HEIGHT                   600
 #define WINDOW_WIDTH                    800
@@ -20,7 +21,9 @@ class app
         SDL_Renderer *renderer;
         TTF_Font *font;
         bool running;
-        //std::vector<widget> widgets;
+        std::vector<std::unique_ptr<widget>> widgets;
+
+        // TODO: widgets should be a member of app class
 
     public:
         app();
@@ -29,6 +32,7 @@ class app
         void programLoop();
         bool getRunningState();
         void setRunningState(bool state);
+        void setActiveState(std::vector<int> activeWidgets);
         void renderStartScreen();
         void close();
 };

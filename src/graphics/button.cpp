@@ -11,7 +11,6 @@ button::button(
     widgetTheme theme
 ) : 
     widget(x,y,w,h, id, theme),
-    isPressed(false),
     font(TTF_OpenFont(FONT_PATH_1, fontSize)),
     callback(cb)
     {
@@ -44,7 +43,6 @@ void button::render(SDL_Renderer *renderer) {
     );
     SDL_RenderFillRect(renderer, &rect);
     
-    // Render surface from 
     SDL_Surface *surfaceLabel = TTF_RenderText_Solid(font, identifier, theme.textColor);
     SDL_Rect Message_rect;
     Message_rect.x = rect.x + (rect.w - surfaceLabel->w) / 2; 
@@ -59,16 +57,18 @@ void button::render(SDL_Renderer *renderer) {
 
 void button::handleEvent(SDL_Event *event) {
     
-    if (event->type == SDL_MOUSEBUTTONDOWN) {
+    if (event->type == SDL_MOUSEBUTTONDOWN && !isPressed) {
         isPressed = true;
-        // TODO: check SDL_MOTION and that isPressed is true (we just had MOUSEBUTTON DOWN), 
-        //       get x,y points of hover and set isPressed to false if residing outside of box once 
+    }
+    if (event->type == SDL_MOUSEMOTION && isPressed) {
+        SDL_Point p = {event->motion.x, event->motion.y};
+        if (!SDL_PointInRect(&p, &rect)) {
+            isPressed = false;
+        }
 
     }
     if (event->type == SDL_MOUSEBUTTONUP && isPressed) {
         callback();
-        std::cout << "Button pressed" << std::endl;
         isPressed = false;
     }
-
 }

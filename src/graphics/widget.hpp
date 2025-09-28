@@ -13,12 +13,17 @@ private:
     
 public:
 
-    SDL_Rect rect;    
+
+    SDL_Rect rect;
+    int isPressed;
+    int isActive;
     const char *identifier;
     widgetTheme theme;
 
     widget(int x, int y, int w, int h, const char *id, widgetTheme theme) {
         this->rect = {x, y, w, h};
+        this->isPressed = false;
+        this->isActive = false;
         this->identifier = id;
         this->theme = theme;
     }

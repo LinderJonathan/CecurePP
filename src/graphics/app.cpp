@@ -10,8 +10,6 @@
 #include <vector>
 #include <memory>
 
-std::vector<std::unique_ptr<widget>> widgets;
-
 app::app() : window(NULL), renderer(NULL) {
     SDL_Init;
     TTF_Init();
@@ -40,6 +38,12 @@ app::app() : window(NULL), renderer(NULL) {
     if (!font) {
         std::cout << "could not find font: " << TTF_GetError() <<  "\n";
     }
+
+    button quitButton(0, 0, WIDGET_WIDTH_CONFIG_2, WIDGET_HEIGHT_CONFIG_2, WIDGET_FONTSIZE_36, "QUIT", [this]
+                      { setRunningState(false); }, WIDGET_THEME_1);
+
+    widgets.push_back(std::make_unique<button>(quitButton));
+
     running = true;
 }
 
@@ -48,15 +52,9 @@ app::~app() { close(); }
 void app::programLoop() {
 
     // TODO: figure out how to build up different windows
-    
-    // TODO: figure out how to iterate through widgets.
-    button quitButton(0, 0, WIDGET_WIDTH_CONFIG_2, WIDGET_HEIGHT_CONFIG_2, WIDGET_FONTSIZE_36, "QUIT", [this]
-                      { setRunningState(false); }, WIDGET_THEME_1);
-    widgets.push_back(std::make_unique<button>(quitButton));
-    // TODO: move to class member instead.
 
-    quitButton.render(renderer);
-    
+    widgets[0]->render(renderer);
+
     while (running) {
         int x, y;   // TODO: make these variables GLOBAL instead to save mouse position
         SDL_Event event;
@@ -66,6 +64,7 @@ void app::programLoop() {
         case SDL_QUIT:
             running = false;
             break;
+
         case SDL_MOUSEBUTTONDOWN:
             SDL_GetMouseState(&x, &y);
             /*
@@ -90,6 +89,24 @@ void app::programLoop() {
         case SDL_MOUSEBUTTONUP:
             SDL_GetMouseState(&x, &y);
             for (int i = 0; i < widgets.size(); i++) {
+
+                if (
+                    x > widgets[i]->rect.x && x < widgets[i]->rect.x + widgets[i]->rect.w &&
+                    y > widgets[i]->rect.y && y < widgets[i]->rect.y + widgets[i]->rect.h
+                ) {
+                    widgets[i]->handleEvent(&event);
+                }
+            }
+
+            break;
+        
+        case SDL_MOUSEMOTION:
+            SDL_GetMouseState(&x, &y);
+            for (int i = 0; i < widgets.size(); i++) {
+
+                if (widgets[i]->isPressed) {
+                    widgets[i]->handleEvent(&event);
+                }
                 if (
                     x > widgets[i]->rect.x && x < widgets[i]->rect.x + widgets[i]->rect.w &&
                     y > widgets[i]->rect.y && y < widgets[i]->rect.y + widgets[i]->rect.h
