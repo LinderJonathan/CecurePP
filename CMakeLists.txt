@@ -8,10 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # OpenSSL
 find_package(OpenSSL REQUIRED)
 
-# SDL
+# SDL2
 # find_package(SDL2 CONFIG REQUIRED) # Apparently makes CMake look for SDL2config.cmake instead of SDL2.cmake
 find_library(SDL2_LIBRARY NAMES SDL2 PATHS C:/msys64/mingw64/lib)
 find_path(SDL2_INCLUDE_DIR SDL.h PATHS C:/msys64/mingw64/include/SDL2)
+
+# SDL2_ttf
+find_library(SDL2_TTF_LIBRARY NAMES SDL2_ttf PATHS C:/msys64/mingw64/lib)
+find_path(SDL2_TTF_INCLUDE_DIR SDL_ttf.h PATHS C:/msys64/mingw64/include/SDL2)
 
 # Catch2
 include(FetchContent)
@@ -29,22 +33,26 @@ add_library(cecurepp_lib
     src/keyHandler.cpp
     src/signHandler.cpp
     utils/fileUtils.cpp
-    src/graphics/windowHandler.cpp
+    src/graphics/app.cpp
+    src/graphics/button.cpp
 )
 
 target_include_directories(cecurepp_lib PUBLIC
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/utils
     ${CMAKE_SOURCE_DIR}/src
+    C:/msys64/mingw64/include/SDL2
     ${SDL2_INCLUDE_DIR}
-
+    ${SDL2_TTF_INCLUDE_DIR}
 )
 
 target_link_libraries(cecurepp_lib PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
     ${SDL2_LIBRARY}
+    ${SDL2_TTF_LIBRARY}
 )
+
 
 add_executable(cecurepp src/main.cpp)
 target_link_libraries(cecurepp PRIVATE cecurepp_lib)

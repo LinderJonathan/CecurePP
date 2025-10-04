@@ -1,39 +1,36 @@
 #pragma once
 
+#include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <SDL2/SDL.h>
-#include <functional>
-#include <string>
+#include <SDL2/SDL_ttf.h>
+#include "themes.hpp"
 
-#define BUTTON_HEIGHT_CONFIG_1          50
-#define BUTTON_WIDTH_CONFIG_1           100
-#define BUTTON_HEIGHT_CONFIG_2          100
-#define BUTTON_WIDTH_CONFIG_2           200  
-
-struct buttonColor {
-    int r, g, b
-};
-
-class button
+class widget
 {
 private:
-    /* data */
+    
 public:
 
+
     SDL_Rect rect;
-    const std::string &label;
-    std::function<void()> callback;
+    int isPressed;
+    int isActive;
+    const char *identifier;
+    widgetTheme theme;
 
-    button(
-        int x,
-        int y,
-        int width,
-        int height,
-        buttonColor,
-        const std::string &label,
-        std::function<void()> callback
-    );
-    ~button();
+    widget(int x, int y, int w, int h, const char *id, widgetTheme theme) {
+        this->rect = {x, y, w, h};
+        this->isPressed = false;
+        this->isActive = false;
+        this->identifier = id;
+        this->theme = theme;
+    }
 
-    void render(SDL_Renderer *renderer);
-    void handleEvent(SDL_Event *event);
+    virtual ~widget() = default;
+
+    virtual void render(SDL_Renderer* renderer) = 0;
+    virtual void handleEvent(SDL_Event *event) = 0;
 };
+
